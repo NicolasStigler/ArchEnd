@@ -11,6 +11,7 @@ module mainfsm (
   NextPC,
   RegW,
   MemW,
+  FPUW,
   Branch,
   ALUOp
 );
@@ -26,6 +27,7 @@ module mainfsm (
   output wire NextPC;
   output wire RegW;
   output wire MemW;
+  output wire FPUW;
   output wire Branch;
   output wire ALUOp;
   reg [3:0] state;

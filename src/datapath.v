@@ -9,6 +9,7 @@ module datapath (
   PCWrite,
   RegWrite,
   IRWrite,
+  FPUWrite,
   AdrSrc,
   RegSrc,
   ALUSrcA,
@@ -27,6 +28,7 @@ module datapath (
   input wire PCWrite;
   input wire RegWrite;
   input wire IRWrite;
+  input wire FPUWrite;
   input wire AdrSrc;
   input wire [1:0] RegSrc;
   input wire [1:0] ALUSrcA;

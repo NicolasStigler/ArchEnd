@@ -7,6 +7,7 @@ module controller (
   MemWrite,
   RegWrite,
   IRWrite,
+  FPUWrite,
   AdrSrc,
   RegSrc,
   ALUSrcA,
@@ -23,6 +24,7 @@ module controller (
   output wire MemWrite;
   output wire RegWrite;
   output wire IRWrite;
+  output wire FPUWrite;
   output wire AdrSrc;
   output wire [1:0] RegSrc;
   output wire [1:0] ALUSrcA;
@@ -35,6 +37,7 @@ module controller (
   wire NextPC;
   wire RegW;
   wire MemW;
+  wire FPUW;
   decode dec(
     .clk(clk),
     .reset(reset),
@@ -46,6 +49,7 @@ module controller (
     .NextPC(NextPC),
     .RegW(RegW),
     .MemW(MemW),
+    .FPUW(FPUW),
     .IRWrite(IRWrite),
     .AdrSrc(AdrSrc),
     .ResultSrc(ResultSrc),
@@ -65,8 +69,10 @@ module controller (
     .NextPC(NextPC),
     .RegW(RegW),
     .MemW(MemW),
+    .FPUW(FPUW),
     .PCWrite(PCWrite),
     .RegWrite(RegWrite),
-    .MemWrite(MemWrite)
+    .MemWrite(MemWrite),
+    .FPUWrite(FPUWrite)
   );
 endmodule

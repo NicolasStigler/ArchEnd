@@ -17,6 +17,7 @@ module arm (
   wire PCWrite;
   wire RegWrite;
   wire IRWrite;
+  wire FPUWrite;
   wire AdrSrc;
   wire [1:0] RegSrc;
   wire [1:0] ALUSrcA;
@@ -33,6 +34,7 @@ module arm (
     .MemWrite(MemWrite),
     .RegWrite(RegWrite),
     .IRWrite(IRWrite),
+    .FPUWrite(FPUWrite),
     .AdrSrc(AdrSrc),
     .RegSrc(RegSrc),
     .ALUSrcA(ALUSrcA),
@@ -52,6 +54,7 @@ module arm (
     .PCWrite(PCWrite),
     .RegWrite(RegWrite),
     .IRWrite(IRWrite),
+    .FPUWrite(FPUWrite),
     .AdrSrc(AdrSrc),
     .RegSrc(RegSrc),
     .ALUSrcA(ALUSrcA),

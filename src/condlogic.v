@@ -8,9 +8,11 @@ module condlogic (
   NextPC,
   RegW,
   MemW,
+  FPUW,
   PCWrite,
   RegWrite,
-  MemWrite
+  MemWrite,
+  FPUWrite
 );
   input wire clk;
   input wire reset;
@@ -21,9 +23,11 @@ module condlogic (
   input wire NextPC;
   input wire RegW;
   input wire MemW;
+  input wire FPUW;
   output wire PCWrite;
   output wire RegWrite;
   output wire MemWrite;
+  output wire FPUWrite;
   wire [1:0] FlagWrite;
   wire [3:0] Flags;
   wire CondEx;

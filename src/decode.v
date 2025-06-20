@@ -9,6 +9,7 @@ module decode (
   NextPC,
   RegW,
   MemW,
+  FPUW,
   IRWrite,
   AdrSrc,
   ResultSrc,
@@ -28,6 +29,7 @@ module decode (
   output wire NextPC;
   output wire RegW;
   output wire MemW;
+  output wire FPUW;
   output wire IRWrite;
   output wire AdrSrc;
   output wire [1:0] ResultSrc;
@@ -53,6 +55,7 @@ module decode (
     .NextPC(NextPC),
     .RegW(RegW),
     .MemW(MemW),
+    .FPUW(FPUW),
     .Branch(Branch),
     .ALUOp(ALUOp)
   );
