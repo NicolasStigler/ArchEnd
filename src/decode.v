@@ -65,18 +65,18 @@ module decode (
   // ALU Decoder
   always @(*)
     if (ALUOp)
-      if (Mul == 4'b1001)
+      if (Mul == 4'b1001) // Instr[7:4] = Multiply Indicator
         case (Funct[4:1])
-          4'b0000: ALUControl = 3'b101;
+          4'b0000: ALUControl = 3'b101; // MUL
           default: ALUControl = 3'bxxx;
         endcase
       else
         case (Funct[4:1])
-          4'b0100: ALUControl = 3'b000;
-          4'b0010: ALUControl = 3'b001;
-          4'b0000: ALUControl = 3'b010;
-          4'b1100: ALUControl = 3'b011;
-          4'b0001: ALUControl = 3'b100;
+          4'b0100: ALUControl = 3'b000; // ADD
+          4'b0010: ALUControl = 3'b001; // SUB
+          4'b0000: ALUControl = 3'b010; // AND
+          4'b1100: ALUControl = 3'b011; // ORR
+          4'b0001: ALUControl = 3'b100; // EOR
           default: ALUControl = 3'bxxx;
         endcase
       FlagW[1] = Funct[0];

@@ -25,7 +25,7 @@ El proyecto se divide en tres entregas principales:
 - [ ] Probar la nueva instrucción MUL.
 #### Entregables:
 - [ ] Reporte corto en PDF describiendo la implementación, resultados y código.
-- [ ] Proyecto de Verilog con código comentado.
+- [x] Proyecto de Verilog con código comentado.
 - [ ] Comprimir todo en un archivo `PO.zip`.
 
 ### Entrega P1: Instrucciones Adicionales (3 Puntos)
