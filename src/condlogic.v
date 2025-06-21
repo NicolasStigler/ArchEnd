@@ -74,5 +74,4 @@ module condlogic (
   assign PCWrite = NextPC | (PCS & CondExFl);
   assign RegWrite = CondExFl & RegW;
   assign MemWrite = CondExFl & MemW;
-  assign FlagWrite = FlagW & {2 {CondEx}};
 endmodule
