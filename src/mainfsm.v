@@ -94,7 +94,7 @@ module mainfsm (
       MEMWR: controls = 13'b0010010000000;
       MEMRD: controls = 13'b0000010000000;
       MEMWB: controls = 13'b0001000100000;
-      BRANCH: controls = 13'b0100001010010;
+      BRANCH: controls = 13'b0100001000010;
       default: controls = 13'bxxxxxxxxxxxxx;
     endcase
   assign {NextPC, Branch, MemW, RegW, IRWrite, AdrSrc, ResultSrc, ALUSrcA, ALUSrcB, ALUOp} = controls;

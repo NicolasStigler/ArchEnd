@@ -17,9 +17,9 @@ El proyecto se divide en tres entregas principales:
 ## Lista de Tareas y Avance
 ### Entrega P0: Multiciclo con MUL (2 Puntos)
 #### Hardware (Verilog):
-- [ ] Completar el Control Unit del MultiCycle processor.
-- [ ] Completar el módulo del datapath.
-- [ ] Implementar la instrucción MUL.
+- [x] Completar el Control Unit del MultiCycle processor.
+- [x] Completar el módulo del datapath.
+- [x] Implementar la instrucción MUL.
 #### Pruebas (Testbenches):
 - [ ] Verificar que las instrucciones del Single Cycle Challenge funcionen correctamente.
 - [ ] Probar la nueva instrucción MUL.
