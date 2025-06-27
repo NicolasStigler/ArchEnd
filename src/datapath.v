@@ -97,7 +97,7 @@ module datapath (
     .y(RA2)
   );
 
-  assign A3 = Instr[15:12];
+  assign A3 = (Instr[7:4] == 4'b1001) ? Instr[19:16] : Instr[15:12];
 
   extend e(
     .Instr(Instr[23:0]),

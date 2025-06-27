@@ -68,6 +68,8 @@ module decode (
       if (Mul == 4'b1001) // Instr[7:4] = Multiply Indicator
         case (Funct[4:1])
           4'b0000: ALUControl = 3'b101; // MUL
+          4'b0001: ALUControl = 3'b110; // UMUL
+          4'b0010: ALUControl = 3'b111; // SMULL 
           default: ALUControl = 3'bxxx;
         endcase
       else

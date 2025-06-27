@@ -1,7 +1,7 @@
 module alu (
   input [31:0] a, b,
   input [2:0] ALUControl,
-  output reg [31:0] Result,
+  output reg [31:0] Result, Long,
   output wire [3:0] ALUFlags
 );
 
@@ -19,6 +19,14 @@ always @(*) begin
     3'b011: Result = a | b;
     3'b100: Result = a ^ b;
     3'b101: Result = a * b;
+    3'b110: { Long, Result } = a * b;
+    3'b111:
+      case ({ a[31], b[31] })
+        2'b00: { Long, Result } = a * b;
+        2'b01: { Long, Result } = -((a) * -(b));
+        2'b10: { Long, Result } = -(-(a) * (b));
+        2'b11: { Long, Result } = -(a) * -(b);
+      endcase
   endcase
 end
 
