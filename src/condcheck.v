@@ -5,7 +5,7 @@ module condcheck (
 );
   input wire [3:0] Cond;
   input wire [3:0] Flags;
-  output wire CondEx;
+  output reg CondEx;
 
   always @(*)
     case (Cond)

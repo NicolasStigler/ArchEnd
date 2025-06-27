@@ -26,7 +26,7 @@ module decode (
   input wire [5:0] Funct;
   input wire [3:0] Rd;
   input wire [3:0] Mul;
-  output wire [1:0] FlagW;
+  output reg [1:0] FlagW;
   output wire PCS;
   output wire NextPC;
   output wire RegW;
@@ -39,7 +39,7 @@ module decode (
   output wire [1:0] ALUSrcB;
   output wire [1:0] ImmSrc;
   output wire [1:0] RegSrc;
-  output wire [2:0] ALUControl;
+  output reg [2:0] ALUControl;
   wire Branch;
   wire ALUOp;
 
@@ -63,8 +63,8 @@ module decode (
   );
 
   // ALU Decoder
-  always @(*)
-    if (ALUOp)
+  always @(*) begin
+    if (ALUOp) begin
       if (Mul == 4'b1001) // Instr[7:4] = Multiply Indicator
         case (Funct[4:1])
           4'b0000: ALUControl = 3'b101; // MUL
@@ -81,9 +81,11 @@ module decode (
         endcase
       FlagW[1] = Funct[0];
       FlagW[0] = Funct[0] & (ALUControl == 3'b00?);
-    else
+    end else begin
       ALUControl = 3'b000;
       FlagW = 2'b00;
+    end
+  end
 
   // PC Logic
   assign PCS = ((Rd == 4'b1111) & RegW) | Branch;
