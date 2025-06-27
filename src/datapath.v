@@ -83,15 +83,21 @@ module datapath (
     .q(Data)
   );
 
+  wire [3:0] mRA1;
+  assign mRA1 = (Instr[7:4] == 4'b1001) ? Instr[3:0] : Instr[19:16];
+
   mux2 #(4) ra1mux(
-    .d0(Instr[19:16]),
+    .d0(mRA1),
     .d1(4'd15),
     .s(RegSrc[0]),
     .y(RA1)
   );
 
+  wire [3:0] mRA2;
+  assign mRA2 = (Instr[7:4] == 4'b1001) ? Instr[11:8] : Instr[3:0];
+
   mux2 #(4) ra2mux(
-    .d0(Instr[3:0]),
+    .d0(mRA2),
     .d1(Instr[15:12]),
     .s(RegSrc[1]),
     .y(RA2)
