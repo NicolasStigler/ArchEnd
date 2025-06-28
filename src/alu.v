@@ -14,19 +14,13 @@ assign sum = a + condinvb + ALUControl[0]; // a + b + cin
 
 always @(*) begin
   casex (ALUControl)
-    3'b00?: Result = sum;
-    3'b010: Result = a & b;
-    3'b011: Result = a | b;
-    3'b100: Result = a ^ b;
-    3'b101: Result = a * b;
-    3'b110: { Long, Result } = a * b;
-    3'b111:
-      case ({ a[31], b[31] })
-        2'b00: { Long, Result } = a * b;
-        2'b01: { Long, Result } = -((a) * -(b));
-        2'b10: { Long, Result } = -(-(a) * (b));
-        2'b11: { Long, Result } = -(a) * -(b);
-      endcase
+    3'b00?: Result = sum; // 0: ADD | 1: SUB
+    3'b010: Result = a & b; // AND
+    3'b011: Result = a | b; // ORR
+    3'b100: Result = a ^ b; // EOR
+    3'b101: Result = a * b; // MUL
+    3'b110: { Long, Result } = $signed(a) * $signed(b); // SMUL
+    3'b111: { Long, Result } = a * b; // UMUL
   endcase
 end
 

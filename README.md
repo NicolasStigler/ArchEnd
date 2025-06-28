@@ -21,16 +21,16 @@ El proyecto se divide en tres entregas principales:
 - [x] Completar el módulo del datapath.
 - [x] Implementar la instrucción MUL.
 #### Pruebas (Testbenches):
-- [ ] Verificar que las instrucciones del Single Cycle Challenge funcionen correctamente.
-- [ ] Probar la nueva instrucción MUL.
+- [x] Verificar que las instrucciones del Single Cycle Challenge funcionen correctamente.
+- [x] Probar la nueva instrucción MUL.
 #### Entregables:
-- [ ] Reporte corto en PDF describiendo la implementación, resultados y código.
+- [x] Reporte corto en PDF describiendo la implementación, resultados y código.
 - [x] Proyecto de Verilog con código comentado.
-- [ ] Comprimir todo en un archivo `PO.zip`.
+- [x] Comprimir todo en un archivo `PO.zip`.
 
 ### Entrega P1: Instrucciones Adicionales (3 Puntos)
 #### Hardware (Verilog):
-- [ ] Implementar las instrucciones UMUL, SMUL y DIV.
+- [x] Implementar las instrucciones UMUL, SMUL y DIV.
 #### Software (ASM):
 - [ ] Crear un programa en assembly que utilice las nuevas instrucciones (UMUL, SMUL, DIV).
 #### Pruebas (Testbenches):
