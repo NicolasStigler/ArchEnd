@@ -30,11 +30,13 @@ El proyecto se divide en tres entregas principales:
 
 ### Entrega P1: Instrucciones Adicionales (3 Puntos)
 #### Hardware (Verilog):
-- [x] Implementar las instrucciones UMUL, SMUL y DIV.
+- [x] Implementar las instrucciones UMUL y SMUL.
+- [ ] Implementar la instruccion DIV.
 #### Software (ASM):
-- [ ] Crear un programa en assembly que utilice las nuevas instrucciones (UMUL, SMUL, DIV).
+- [x] Crear un programa en assembly que utilice las nuevas instrucciones (UMUL, SMUL).
+- [ ] Crear un programa en assembly que utilice la nueva instruccion (DIV).
 #### Pruebas (Testbenches):
-- [ ] Crear un testbench en Verilog para verificar las nuevas instrucciones.
+- [x] Crear un testbench en Verilog para verificar las nuevas instrucciones.
 #### Entregables:
 - [ ] Presentación de 10 minutos explicando el funcionamiento del microprocesador MultiCycle y la implementación de las nuevas instrucciones.
 - [ ] Reporte corto describiendo la implementación.
