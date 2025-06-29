@@ -69,7 +69,8 @@ module decode (
         case (Funct[4:1])
           4'b0000: ALUControl = 3'b101; // MUL
           4'b0100: ALUControl = 3'b110; // SMUL
-          4'b0110: ALUControl = 3'b111; // UMUL 
+          4'b0110: ALUControl = 3'b111; // UMUL
+          4'b1000: ALUControl = 3'b100; // DIV
           default: ALUControl = 3'bxxx;
         endcase
       else

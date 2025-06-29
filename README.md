@@ -31,10 +31,10 @@ El proyecto se divide en tres entregas principales:
 ### Entrega P1: Instrucciones Adicionales (3 Puntos)
 #### Hardware (Verilog):
 - [x] Implementar las instrucciones UMUL y SMUL.
-- [ ] Implementar la instruccion DIV.
+- [x] Implementar la instruccion DIV (MUL pero Instr[24] = 1).
 #### Software (ASM):
 - [x] Crear un programa en assembly que utilice las nuevas instrucciones (UMUL, SMUL).
-- [ ] Crear un programa en assembly que utilice la nueva instruccion (DIV).
+- [x] Crear un programa en assembly que utilice la nueva instruccion (DIV).
 #### Pruebas (Testbenches):
 - [x] Crear un testbench en Verilog para verificar las nuevas instrucciones.
 #### Entregables:
