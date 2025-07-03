@@ -14,19 +14,21 @@ assign condinvb = ALUControl[0] ? ~b : b; // mux
 assign sum = a + condinvb + ALUControl[0]; // a + b + cin
 
 always @(*) begin
-  casex (ALUControl)
-    if (special) begin
+  if (special) begin
+    casex (ALUControl)
       3'b101: Result = a * b; // MUL
       3'b110: { Long, Result } = $signed(a) * $signed(b); // SMUL
       3'b111: { Long, Result } = a * b; // UMUL
       3'b100: Result = a / b; // DIV
-    end else begin
+    endcase
+  end else begin
+    casex (ALUControl)
       3'b00?: Result = sum; // 0: ADD | 1: SUB
       3'b010: Result = a & b; // AND
       3'b011: Result = a | b; // ORR
       3'b100: Result = a ^ b; // EOR
-    end
-  endcase
+    endcase
+  end
 end
 
 assign neg = Result[31];
