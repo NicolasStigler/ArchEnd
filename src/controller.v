@@ -44,7 +44,7 @@ module controller (
     .Op(Instr[27:26]),
     .Funct(Instr[25:20]),
     .Rd(Instr[15:12]),
-    .Mul(Instr[7:4])
+    .Mul(Instr[7:4]),
     .FlagW(FlagW),
     .PCS(PCS),
     .NextPC(NextPC),
