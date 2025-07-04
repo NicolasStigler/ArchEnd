@@ -22,8 +22,10 @@ module regfile (
   always @(posedge clk) begin
     if (we3)
       rf[a3] <= wd3; // write wd3 into the register a3
+  end
+  always @(*) begin
     // if ra is 15, use r15, else use register in rf
-    assign rd1 = (ra1 == 4'b1111 ? r15 : rf[ra1]);
-    assign rd2 = (ra2 == 4'b1111 ? r15 : rf[ra2]);
+    rd1 = (ra1 == 4'b1111) ? r15 : rf[ra1];
+    rd2 = (ra2 == 4'b1111) ? r15 : rf[ra2];
   end
 endmodule

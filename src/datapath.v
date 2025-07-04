@@ -149,7 +149,6 @@ module datapath (
     .a(SrcA),
     .b(SrcB),
     .ALUControl(ALUControl),
-    .special((Instr[7:4] == 4'b1001)),
     .Result(ALUResult),
     .ALUFlags(ALUFlags)
   );

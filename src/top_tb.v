@@ -25,4 +25,8 @@ module testbench;
 		clk <= 0;
 		#(5);
 	end
+  initial begin
+    $dumpfile("waveform.vcd");
+    $dumpvars;
+  end
 endmodule
