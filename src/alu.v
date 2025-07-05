@@ -19,7 +19,7 @@ always @(*) begin
     3'b011: Result = a | b; // ORR
     3'b100: Result = a * b; // MUL
     3'b101: { Long, Result } = $signed(a) * $signed(b); // SMUL
-    3'b110: { Long, Result } = a * b; // UMUL
+    3'b110: { Long, Result } = $unsigned(a) * $unsigned(b); // UMUL
     3'b111: Result = a / b; // DIV
   endcase
 end
