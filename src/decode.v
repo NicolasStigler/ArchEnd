@@ -42,6 +42,7 @@ module decode (
   output reg [2:0] ALUControl;
   wire Branch;
   wire ALUOp;
+  reg Long;
 
   // Main FSM
   mainfsm fsm(
@@ -59,17 +60,30 @@ module decode (
     .MemW(MemW),
     .FPUW(FPUW),
     .Branch(Branch),
-    .ALUOp(ALUOp)
+    .ALUOp(ALUOp),
+    .Long(Long)
   );
 
   // ALU Decoder
   always @(*) begin
-    if (ALUOp) begin
+    Long = 1'b0;
+    if (Op == 2'b11) begin
+      ALUControl[0] = Funct[0];
+      ALUControl[1] = Funct[2];
+      ALUControl[2] = 1'b0;
+      FlagW = 2'b00;
+    end else if (ALUOp) begin
       if (Mul == 4'b1001) // Instr[7:4] = Multiply Indicator
         case (Funct[4:1])
           4'b0000: ALUControl = 3'b100; // MUL
-          4'b0100: ALUControl = 3'b101; // SMUL
-          4'b0110: ALUControl = 3'b110; // UMUL
+          4'b0110: begin
+            ALUControl = 3'b101; // SMUL
+            Long = 1'b1;
+          end
+          4'b0100: begin
+            ALUControl = 3'b110; // UMUL
+            Long = 1'b1;
+          end
           4'b1000: ALUControl = 3'b111; // DIV
           default: ALUControl = 3'bxxx;
         endcase

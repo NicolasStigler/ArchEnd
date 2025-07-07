@@ -25,6 +25,7 @@ module arm (
   wire [1:0] ImmSrc;
   wire [2:0] ALUControl;
   wire [1:0] ResultSrc;
+  wire LongFlag;
   controller c(
     .clk(clk),
     .reset(reset),
@@ -61,6 +62,7 @@ module arm (
     .ALUSrcB(ALUSrcB),
     .ResultSrc(ResultSrc),
     .ImmSrc(ImmSrc),
-    .ALUControl(ALUControl)
+    .ALUControl(ALUControl),
+    .LongFlag(LongFlag)
   );
 endmodule
