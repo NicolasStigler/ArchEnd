@@ -38,22 +38,22 @@ El proyecto se divide en tres entregas principales:
 #### Pruebas (Testbenches):
 - [x] Crear un testbench en Verilog para verificar las nuevas instrucciones.
 #### Entregables:
-- [ ] Presentación de 10 minutos explicando el funcionamiento del microprocesador MultiCycle y la implementación de las nuevas instrucciones.
-- [ ] Reporte corto describiendo la implementación.
-- [ ] Diapositivas de la presentación (PPT).
-- [ ] Proyecto de Verilog con código comentado.
-- [ ] Comprimir todo en un archivo `P1.zip`.
+- [x] Presentación de 10 minutos explicando el funcionamiento del microprocesador MultiCycle y la implementación de las nuevas instrucciones.
+- [x] Reporte corto describiendo la implementación.
+- [x] Diapositivas de la presentación (PPT).
+- [x] Proyecto de Verilog con código comentado.
+- [x] Comprimir todo en un archivo `P1.zip`.
 
 ### Entrega P2: Final (16 Puntos)
 #### Hardware (Verilog):
-- [ ] Implementar una Unidad de Punto Flotante (FPU) como un bloque separado del ALU.
-- [ ] Implementar la instrucción ADD de punto flotante para precisión simple (32-bit) y media (16-bit).
-- [ ] Implementar la instrucción MUL de punto flotante para precisión simple (32-bit) y media (16-bit).
-- [ ] Manejar el desbordamiento (overflow) mediante la definición de un flag.
+- [x] Implementar una Unidad de Punto Flotante (FPU) como un bloque separado del ALU.
+- [x] Implementar la instrucción ADD de punto flotante para precisión simple (32-bit) y media (16-bit).
+- [x] Implementar la instrucción MUL de punto flotante para precisión simple (32-bit) y media (16-bit).
+- [x] Manejar el desbordamiento (overflow) mediante la definición de un flag.
 #### Software (ASM):
 - [ ] Crear un programa en assembly que utilice las instrucciones de punto flotante.
 #### Pruebas y Despliegue:
-- [ ] Crear un testbench en Verilog para verificar las instrucciones de punto flotante.
+- [x] Crear un testbench en Verilog para verificar las instrucciones de punto flotante.
 - [ ] Implementar el microprocesador completo en la FPGA (Basys3).
 #### Entregables:
 - [ ] Presentación final de 15 minutos explicando el microprocesador, la implementación de las nuevas instrucciones y la implementación en la FPGA.
