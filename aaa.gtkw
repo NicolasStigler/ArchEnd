@@ -1,0 +1,37 @@
+[*]
+[*] GTKWave Analyzer v3.3.123 (w)1999-2025 BSI
+[*] Thu Jul 10 18:04:51 2025
+[*]
+[dumpfile] "/home/mango/Documents/arqui/projecto/ArchEnd/src/waveform.vcd"
+[dumpfile_mtime] "Thu Jul 10 17:40:31 2025"
+[dumpfile_size] 60151419
+[savefile] "/home/mango/Documents/arqui/projecto/ArchEnd/aaa.gtkw"
+[timestart] 141300
+[size] 1920 1033
+[pos] -27 -24
+*-15.000000 260000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[treeopen] testbench.dut.
+[treeopen] testbench.dut.arm.
+[treeopen] testbench.dut.arm.dp.
+[sst_width] 269
+[signals_width] 179
+[sst_expanded] 1
+[sst_vpaned_height] 307
+@28
+testbench.dut.arm.clk
+testbench.dut.arm.reset
+@22
+testbench.dut.arm.WriteData[31:0]
+testbench.dut.arm.Adr[31:0]
+@28
+testbench.dut.arm.MemWrite
+@22
+testbench.dut.arm.dp.Instr[31:0]
+testbench.dut.arm.dp.a.a[31:0]
+testbench.dut.arm.dp.a.b[31:0]
+testbench.dut.arm.dp.a.Result[31:0]
+@23
+testbench.dut.arm.dp.a.Long[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
