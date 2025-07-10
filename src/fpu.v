@@ -53,7 +53,7 @@ module fpu (
   endfunction
 
   always @(*) begin
-    if (prec) begin
+    if (precision) begin
       a_fp = a;
       b_fp = b;
     end else begin
@@ -67,7 +67,7 @@ module fpu (
       default: res_fp = 32'bx;
     endcase
 
-    if (prec) begin
+    if (precision) begin
       overflow = (res_fp[30:23] == 8'hFF);
       result = res_fp;
     end else begin

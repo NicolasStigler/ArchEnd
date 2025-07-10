@@ -23,7 +23,7 @@ module regfile (
   input wire [31:0] r15; // PC+8
   output reg [31:0] rd1;
   output reg [31:0] rd2;
-  input wire Long
+  input wire Long;
   reg [31:0] rf [14:0]; // 15 registers
   always @(posedge clk) begin
     if (we3) begin
