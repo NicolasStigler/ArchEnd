@@ -3,7 +3,7 @@ module fpu (
   input wire op, // 0: ADD, 1: MUL
   input wire precision, // 0: half (16-bit), 1: single (32-bit)
   output reg [31:0] result,
-  output reg overflowFlag
+  output wire [3:0] ALUFlags
 );
   reg [31:0] a_fp, b_fp, res_fp;
   reg overflow;
@@ -52,6 +52,10 @@ module fpu (
     end
   endfunction
 
+  wire [31:0] add_res, mul_res;
+  fp_add addmod(.a(a_fp), .b(b_fp), .result(add_res));
+  fp_mul mulmod(.a(a_fp), .b(b_fp), .result(mul_res));
+
   always @(*) begin
     if (precision) begin
       a_fp = a;
@@ -62,8 +66,8 @@ module fpu (
     end
     overflow = 0;
     case (op)
-      1'b0: res_fp = $bitstoreal($realtobits($bitstoreal(a_fp) + $bitstoreal(b_fp)));
-      1'b1: res_fp = $bitstoreal($realtobits($bitstoreal(a_fp) * $bitstoreal(b_fp)));
+      1'b0: res_fp = add_res;
+      1'b1: res_fp = mul_res;
       default: res_fp = 32'bx;
     endcase
 
@@ -74,6 +78,6 @@ module fpu (
       overflow = (res_fp[30:23] == 8'hFF);
       result = {16'b0, single2half(res_fp)};
     end
-    overflowFlag = overflow;
+    ALUFlags = {3'b0, overflow};
   end
 endmodule

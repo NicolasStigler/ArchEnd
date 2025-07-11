@@ -42,7 +42,8 @@ module arm (
     .ALUSrcB(ALUSrcB),
     .ResultSrc(ResultSrc),
     .ImmSrc(ImmSrc),
-    .ALUControl(ALUControl)
+    .ALUControl(ALUControl),
+    .LongFlag(LongFlag)
   );
   datapath dp(
     .clk(clk),

@@ -33,14 +33,6 @@ module condlogic (
   wire CondEx;
   wire CondExFl;
 
-  // Delay writing flags until ALUWB state
-  flopr #(2) flagwritereg(
-    clk,
-    reset,
-    FlagW & {2 {CondEx}},
-    FlagWrite
-  );
-
   // ADD CODE HERE
   condcheck cc(
     .Cond(Cond),
@@ -71,7 +63,9 @@ module condlogic (
     .q(Flags[1:0])
   );
 
+  assign FlagWrite = FlagW & {2 {CondEx}};
   assign PCWrite = NextPC | (PCS & CondExFl);
   assign RegWrite = CondExFl & RegW;
   assign MemWrite = CondExFl & MemW;
+  assign FPUWrite = CondExFl & FPUW;
 endmodule

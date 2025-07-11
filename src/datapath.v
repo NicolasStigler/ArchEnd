@@ -54,10 +54,11 @@ module datapath (
   wire [31:0] ALUOut2;
   wire [3:0] RA1;
   wire [3:0] RA2;
-  wire [3:0] A3;
-  wire [31:0] FPUResult;
-  wire FPUOverflow;
   wire [31:0] FPRD1, FPRD2;
+  wire [31:0] FA;
+  wire [31:0] FResult;
+  wire [31:0] FPUResult;
+  wire [31:0] FWriteData;
 
   // Datapath Hardware Submodules
   flopenr #(32) pcreg(
@@ -110,41 +111,8 @@ module datapath (
     .y(RA2)
   );
 
+  wire [3:0] A3;
   assign A3 = (Instr[7:4] == 4'b1001) ? Instr[19:16] : Instr[15:12];
-
-  extend e(
-    .Instr(Instr[23:0]),
-    .ImmSrc(ImmSrc),
-    .ExtImm(ExtImm)
-  );
-
-  fpuregfile fprf(
-    .clk(clk),
-    .we3(FPUWrite),
-    .ra1(RA1),
-    .ra2(RA2),
-    .a3(A3),
-    .wd3(Result),
-    .r15(Result),
-    .rd1(FPRD1),
-    .rd2(FPRD2)
-  );
-
-  wire [31:0] pRA1, pRA2;
-  assign pRA1 = FPUWrite ? FPRD1 : RD1;
-  assign pRA2 = FPUWrite ? FPRD2 : RD2;
-
-  fpu f(
-    .a(pRA1),
-    .b(pRA2),
-    .op(ALUControl[0]),
-    .precision(ALUControl[1]),
-    .result(FPUResult),
-    .overflowFlag(FPUOverflow)
-  );
-
-  wire [31:0] MainResult;
-  assign MainResult = FPUWrite ? FPUResult : ALUOut;
 
   regfile rf(
     .clk(clk),
@@ -153,12 +121,18 @@ module datapath (
     .ra2(RA2),
     .a3(A3),
     .a4(Instr[15:12]),
-    .wd3(MainResult),
+    .wd3(Result),
     .wd4(ALUOut2),
-    .r15(MainResult),
+    .r15(Result),
     .rd1(RD1),
     .rd2(RD2),
     .Long(LongFlag)
+  );
+
+  extend e(
+    .Instr(Instr[23:0]),
+    .ImmSrc(ImmSrc),
+    .ExtImm(ExtImm)
   );
 
   flopr #(64) rdreg(
@@ -192,6 +166,39 @@ module datapath (
     .ALUFlags(ALUFlags)
   );
 
+  fpuregfile fprf(
+    .clk(clk),
+    .we3(FPUWrite),
+    .ra1(Instr[19:16]),
+    .ra2(Instr[3:0]),
+    .a3(Instr[15:12]),
+    .wd3(FPResult),
+    .rd1(FPRD1),
+    .rd2(FPRD2)
+  );
+
+  flopr #(32) frdreg(
+    .clk(clk),
+    .reset(reset),
+    .d({FPRD1, FPRD2}),
+    .q({FA, FWriteData})
+  );
+
+  fpu f(
+    .a(FA),
+    .b(FWriteData),
+    .precision(Instr[8]),
+    .Result(FPUResult),
+    .ALUFlags(ALUFlags)
+  );
+
+  flopr #(32) fpureg(
+    .clk(clk),
+    .reset(reset),
+    .d(FPUResult),
+    .q(FPResult)
+  );
+
   flopr #(32) alureg(
     .clk(clk),
     .reset(reset),
@@ -214,6 +221,5 @@ module datapath (
     .y(Result)
   );
 
-  assign Result = MainResult;
   assign PCNext = Result;
 endmodule

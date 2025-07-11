@@ -14,7 +14,7 @@ module testbench;
 		.Adr(Adr),
 		.MemWrite(MemWrite)
 	);
-  initial begin
+  	initial begin
 		reset <= 1;
 		#(5);
 		reset <= 0;
