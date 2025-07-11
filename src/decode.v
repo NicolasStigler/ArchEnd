@@ -43,6 +43,8 @@ module decode (
   wire Branch;
   wire ALUOp;
 
+  wire isFPUInstr = (Op == 2'b11);
+
   // Main FSM
   mainfsm fsm(
     .clk(clk),
@@ -62,9 +64,13 @@ module decode (
     .ALUOp(ALUOp)
   );
 
-  // ALU Decoder
+  // ALU and FPU Decoder
   always @(*) begin
-    if (ALUOp) begin
+    if (isFPUInstr) begin
+      // Floating-point: select FPU result, enable FPU write
+      FlagW = 2'b00;
+      ALUControl = 3'b000;
+    end else if (ALUOp) begin
       if (Mul == 4'b1001) // Instr[7:4] = Multiply Indicator
         case (Funct[4:1])
           4'b0000: ALUControl = 3'b100; // MUL
@@ -96,4 +102,8 @@ module decode (
   assign ImmSrc = Op;
   assign RegSrc[1] = Op == 2'b01;
   assign RegSrc[0] = Op == 2'b10;
+
+  // FPU control signals
+  assign ResultSrc = isFPUInstr ? 2'b11 : ResultSrc;
+  assign FPUW = isFPUInstr;
 endmodule

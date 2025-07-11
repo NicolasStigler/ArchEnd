@@ -42,6 +42,9 @@ module datapath (
   wire [31:0] SrcA;
   wire [31:0] SrcB;
   wire [31:0] Result;
+  wire [31:0] FPUResult;
+  wire FPUOp;
+  wire FPUPrec;
   wire [31:0] Data;
   wire [31:0] RD1;
   wire [31:0] RD2;
@@ -123,6 +126,15 @@ module datapath (
     .rd2(RD2)
   );
 
+  // FPU instance
+  fpu fpu_inst(
+    .a(RD1),
+    .b(RD2),
+    .op(FPUOp),
+    .prec(FPUPrec),
+    .result(FPUResult)
+  );
+
   flopr #(64) rdreg(
     .clk(clk),
     .reset(reset),
@@ -160,13 +172,20 @@ module datapath (
     .q(ALUOut)
   );
 
-  mux3 #(32) resultmux(
+  // ResultSrc: 0=ALUOut, 1=Data, 2=ALUResult, 3=FPUResult
+  wire [1:0] ResultSrcExt;
+  assign ResultSrcExt = ResultSrc;
+  mux4 #(32) resultmux(
     .d0(ALUOut),
     .d1(Data),
     .d2(ALUResult),
-    .s(ResultSrc),
+    .d3(FPUResult),
+    .s(ResultSrcExt),
     .y(Result)
   );
+
+  assign FPUOp = Instr[20]; // 0=add, 1=mul
+  assign FPUPrec = Instr[22]; // 0=half, 1=single
 
   assign PCNext = Result;
 endmodule
