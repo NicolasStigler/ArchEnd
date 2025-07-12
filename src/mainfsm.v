@@ -33,6 +33,7 @@ module mainfsm (
   reg [3:0] state;
   reg [3:0] nextstate;
   reg [12:0] controls;
+
   localparam [3:0] FETCH = 0;
   localparam [3:0] DECODE = 1;
   localparam [3:0] MEMADR = 2;
@@ -44,6 +45,8 @@ module mainfsm (
   localparam [3:0] ALUWB = 8;
   localparam [3:0] BRANCH = 9;
   localparam [3:0] UNKNOWN = 10;
+  localparam [3:0] FPUEXEC = 11;
+
 
   // state register
   always @(posedge clk or posedge reset)
@@ -54,7 +57,7 @@ module mainfsm (
 
   // next state logic
   always @(*)
-    casex (state)
+    case (state)
       FETCH: nextstate = DECODE;
       DECODE:
         case (Op)
@@ -65,6 +68,7 @@ module mainfsm (
               nextstate = EXECUTER;
           2'b01: nextstate = MEMADR;
           2'b10: nextstate = BRANCH;
+          2'b11: nextstate = FPUEXEC;
           default: nextstate = UNKNOWN;
         endcase
       EXECUTER: nextstate = ALUWB;
@@ -79,6 +83,7 @@ module mainfsm (
       MEMWR: nextstate = FETCH;
       ALUWB: nextstate = FETCH;
       BRANCH: nextstate = FETCH;
+      FPUEXEC: nextstate = FETCH;
       default: nextstate = FETCH;
     endcase
 
@@ -95,6 +100,7 @@ module mainfsm (
       MEMRD: controls = 13'b0000010000000;
       MEMWB: controls = 13'b0001000100000;
       BRANCH: controls = 13'b0100001000010;
+      FPUEXEC: controls = 13'b0001000001000;
       default: controls = 13'bx;
     endcase
   assign {NextPC, Branch, MemW, RegW, IRWrite, AdrSrc, ResultSrc, ALUSrcA, ALUSrcB, ALUOp} = controls;

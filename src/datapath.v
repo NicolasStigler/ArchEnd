@@ -51,8 +51,25 @@ module datapath (
   wire [3:0] RA1;
   wire [3:0] RA2;
   wire [3:0] A3;
+  wire [31:0] fpu_result;
+  wire fpu_done;
+  wire fpu_overflow;
+
 
   // Datapath Hardware Submodules
+
+ fpu fpu_unit (
+    .clk(clk),
+    .start(FPUWrite),  
+    .op(Instr[21:20]),
+    .precision(Instr[19]),
+    .a(RD1),
+    .b(RD2),
+    .result(fpu_result),
+    .done(fpu_done),
+    .overflow()
+  );
+
   flopenr #(32) pcreg(
     .clk(clk),
     .reset(reset),
@@ -163,7 +180,7 @@ module datapath (
   mux3 #(32) resultmux(
     .d0(ALUOut),
     .d1(Data),
-    .d2(ALUResult),
+    .d2(fpu_result),
     .s(ResultSrc),
     .y(Result)
   );
