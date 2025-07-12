@@ -16,7 +16,8 @@ module datapath (
   ALUSrcB,
   ResultSrc,
   ImmSrc,
-  ALUControl
+  ALUControl,
+  longFlag
 );
   input wire clk;
   input wire reset;
@@ -36,6 +37,7 @@ module datapath (
   input wire [1:0] ResultSrc;
   input wire [1:0] ImmSrc;
   input wire [2:0] ALUControl;
+  input wire longFlag;
   wire [31:0] PCNext;
   wire [31:0] PC;
   wire [31:0] ExtImm;
@@ -53,7 +55,8 @@ module datapath (
   wire [31:0] ALUOut;
   wire [3:0] RA1;
   wire [3:0] RA2;
-  wire [3:0] A3;
+  wire [31:0] FPUResult;
+
 
   // Datapath Hardware Submodules
   flopenr #(32) pcreg(
@@ -106,33 +109,28 @@ module datapath (
     .y(RA2)
   );
 
+  wire [3:0] A3;
   assign A3 = (Instr[7:4] == 4'b1001) ? Instr[19:16] : Instr[15:12];
+
+  regfile rf(
+    .clk(clk),
+    .we3(RegWrite | ((Instr[27:26] == 2'b11))),
+    .ra1(RA1),
+    .ra2(RA2),
+    .a3(A3),
+    .a4(Instr[15:12]),
+    .wd3(WB32),
+    .wd4(ALUOut2),
+    .r15(Result),
+    .rd1(RD1),
+    .rd2(RD2),
+    .long(longFlag)
+  );
 
   extend e(
     .Instr(Instr[23:0]),
     .ImmSrc(ImmSrc),
     .ExtImm(ExtImm)
-  );
-
-  regfile rf(
-    .clk(clk),
-    .we3(RegWrite),
-    .ra1(RA1),
-    .ra2(RA2),
-    .a3(A3),
-    .wd3(Result),
-    .r15(Result),
-    .rd1(RD1),
-    .rd2(RD2)
-  );
-
-  // FPU instance
-  fpu fpu_inst(
-    .a(RD1),
-    .b(RD2),
-    .op(FPUOp),
-    .prec(FPUPrec),
-    .result(FPUResult)
   );
 
   flopr #(64) rdreg(
@@ -172,20 +170,30 @@ module datapath (
     .q(ALUOut)
   );
 
-  // ResultSrc: 0=ALUOut, 1=Data, 2=ALUResult, 3=FPUResult
-  wire [1:0] ResultSrcExt;
-  assign ResultSrcExt = ResultSrc;
-  mux4 #(32) resultmux(
-    .d0(ALUOut),
-    .d1(Data),
-    .d2(ALUResult),
-    .d3(FPUResult),
-    .s(ResultSrcExt),
-    .y(Result)
+  flopr #(32) alureg2(
+    .clk(clk),
+    .reset(reset),
+    .d(ALUResult2),
+    .q(ALUOut2)
   );
 
-  assign FPUOp = Instr[20]; // 0=add, 1=mul
-  assign FPUPrec = Instr[22]; // 0=half, 1=single
+  fpu f(
+    .a(SrcA),
+    .b(SrcB),
+    .op(Instr[20]),
+    .prec(Instr[22]),
+    .result(FPUResult)
+  );
+
+  wire [31:0] WB = (Instr[27:26] == 2'b11) ? FPUResult : Result;
+
+  mux3 #(32) resultmux(
+    .d0(ALUOut),
+    .d1(Data),
+    .d2(WB32),
+    .s(ResultSrc),
+    .y(Result)
+  );
 
   assign PCNext = Result;
 endmodule

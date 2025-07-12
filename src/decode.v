@@ -18,7 +18,8 @@ module decode (
   ALUSrcB,
   ImmSrc,
   RegSrc,
-  ALUControl
+  ALUControl,
+  longFlag
 );
   input wire clk;
   input wire reset;
@@ -40,10 +41,10 @@ module decode (
   output wire [1:0] ImmSrc;
   output wire [1:0] RegSrc;
   output reg [2:0] ALUControl;
+  output wire longFlag;
   wire Branch;
   wire ALUOp;
-
-  wire isFPUInstr = (Op == 2'b11);
+  reg long;
 
   // Main FSM
   mainfsm fsm(
@@ -61,21 +62,26 @@ module decode (
     .MemW(MemW),
     .FPUW(FPUW),
     .Branch(Branch),
-    .ALUOp(ALUOp)
+    .ALUOp(ALUOp),
+    .long(long),
+    .longFlag(longFlag)
   );
 
   // ALU and FPU Decoder
   always @(*) begin
-    if (isFPUInstr) begin
-      // Floating-point: select FPU result, enable FPU write
-      FlagW = 2'b00;
-      ALUControl = 3'b000;
-    end else if (ALUOp) begin
+    long = 0;
+    if (ALUOp) begin
       if (Mul == 4'b1001) // Instr[7:4] = Multiply Indicator
         case (Funct[4:1])
           4'b0000: ALUControl = 3'b100; // MUL
-          4'b0100: ALUControl = 3'b101; // SMUL
-          4'b0110: ALUControl = 3'b110; // UMUL
+          4'b0100: begin
+            ALUControl = 3'b101; // SMUL
+            long = 1;
+          end
+          4'b0110: begin
+            ALUControl = 3'b110; // UMUL
+            long = 1;
+          end
           4'b1000: ALUControl = 3'b111; // DIV
           default: ALUControl = 3'bxxx;
         endcase
@@ -102,8 +108,4 @@ module decode (
   assign ImmSrc = Op;
   assign RegSrc[1] = Op == 2'b01;
   assign RegSrc[0] = Op == 2'b10;
-
-  // FPU control signals
-  assign ResultSrc = isFPUInstr ? 2'b11 : ResultSrc;
-  assign FPUW = isFPUInstr;
 endmodule

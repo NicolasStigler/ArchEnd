@@ -13,7 +13,9 @@ module mainfsm (
   MemW,
   FPUW,
   Branch,
-  ALUOp
+  ALUOp,
+  longFlag,
+  long
 );
   input wire clk;
   input wire reset;
@@ -30,6 +32,8 @@ module mainfsm (
   output wire FPUW;
   output wire Branch;
   output wire ALUOp;
+  output wire longFlag;
+  input wire long;
   reg [3:0] state;
   reg [3:0] nextstate;
   reg [12:0] controls;
@@ -67,8 +71,9 @@ module mainfsm (
           2'b10: nextstate = BRANCH;
           default: nextstate = UNKNOWN;
         endcase
-      EXECUTER: nextstate = ALUWB;
-      EXECUTEI: nextstate = ALUWB;
+      EXECUTER: nextstate = long == 1 ? ALUWB2 : ALUWB;
+      EXECUTEI: nextstate = long == 1 ? ALUWB2 : ALUWB;
+      EXECUTEF: nextstate = FPUWB;
       MEMADR:
         if (Funct[0])
           nextstate = MEMRD;
@@ -85,17 +90,20 @@ module mainfsm (
   // state-dependent output logic
   always @(*)
     case (state)
-      FETCH: controls = 13'b1000101001100;
-      DECODE: controls = 13'b0000001001100;
-      EXECUTER: controls = 13'b0000000000001;
-      EXECUTEI: controls = 13'b0000000000011;
-      ALUWB: controls = 13'b0001000000000;
-      MEMADR: controls = 13'b0000000000010;
-      MEMWR: controls = 13'b0010010000000;
-      MEMRD: controls = 13'b0000010000000;
-      MEMWB: controls = 13'b0001000100000;
-      BRANCH: controls = 13'b0100001000010;
-      default: controls = 13'bx;
+      FETCH: controls =    14'b10001010011000;
+      DECODE: controls =   14'b00000010011000;
+      EXECUTER: controls = 14'b00000000000010;
+      EXECUTEI: controls = 14'b00000000000110;
+      EXECUTEF: controls = 14'b00000000000000;
+      MEMADR: controls =   14'b00000000000100;
+      MEMRD: controls =    14'b00000100000000;
+      MEMWB: controls =    14'b00010001000000;
+      MEMWR: controls =    14'b00100100000000;
+      ALUWB: controls =    14'b00010000000000;
+      ALUWB2: controls =   14'b00010000000001;
+      FPUWB: controls =    14'b00010000000000;
+      BRANCH: controls =   14'b01000010000100;
+      default: controls = 14'b0;
     endcase
-  assign {NextPC, Branch, MemW, RegW, IRWrite, AdrSrc, ResultSrc, ALUSrcA, ALUSrcB, ALUOp} = controls;
+  assign {NextPC, Branch, MemW, RegW, IRWrite, AdrSrc, ResultSrc, ALUSrcA, ALUSrcB, ALUOp, longFlag} = controls;
 endmodule
