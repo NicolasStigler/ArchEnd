@@ -13,6 +13,7 @@ assign condinvb = ALUControl[0] ? ~b : b; // mux
 assign sum = a + condinvb + ALUControl[0]; // a + b + cin
 
 always @(*) begin
+  Long = 32'b0;
   casex (ALUControl)
     3'b00?: Result = sum; // 0: ADD | 1: SUB
     3'b010: Result = a & b; // AND

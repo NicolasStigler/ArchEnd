@@ -47,6 +47,7 @@ module datapath (
   wire [31:0] RD2;
   wire [31:0] A;
   wire [31:0] ALUResult;
+  wire [31:0] ALUResult2;
   wire [31:0] ALUOut;
   wire [3:0] RA1;
   wire [3:0] RA2;
@@ -117,10 +118,13 @@ module datapath (
     .ra1(RA1),
     .ra2(RA2),
     .a3(A3),
+    .a4(Instr[15:12]),
     .wd3(Result),
+    .wd4(ALUResult2),
     .r15(Result),
     .rd1(RD1),
-    .rd2(RD2)
+    .rd2(RD2),
+    .long(Instr[7:4] == 4'b1001)
   );
 
   flopr #(64) rdreg(
@@ -150,6 +154,7 @@ module datapath (
     .b(SrcB),
     .ALUControl(ALUControl),
     .Result(ALUResult),
+    .Long(ALUResult2),
     .ALUFlags(ALUFlags)
   );
 
