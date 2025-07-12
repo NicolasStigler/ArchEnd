@@ -275,6 +275,7 @@ module fpu(
   endfunction
 
   always @(*) begin
+    result = 32'b0;
     if (prec == 1'b0) begin
       if (op == 1'b0)
         result = {16'b0, half_add(a[15:0], b[15:0])};
