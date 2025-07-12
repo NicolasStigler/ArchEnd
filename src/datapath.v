@@ -49,6 +49,8 @@ module datapath (
   wire [31:0] ALUResult;
   wire [31:0] ALUResult2;
   wire [31:0] ALUOut;
+  wire [31:0] FPUResult;
+  wire [4:0] FPUFlags;
   wire [3:0] RA1;
   wire [3:0] RA2;
   wire [3:0] A3;
@@ -158,6 +160,14 @@ module datapath (
     .ALUFlags(ALUFlags)
   );
 
+  fpu fpu_inst(
+    .a(SrcA),
+    .b(SrcB),
+    .op(Instr[22]),
+    .prec(Instr[20]),
+    .result(FPUResult)
+  );
+
   flopr #(32) alureg(
     .clk(clk),
     .reset(reset),
@@ -165,8 +175,12 @@ module datapath (
     .q(ALUOut)
   );
 
+  wire use_fpu = (Instr[27:26] == 2'b11);
+  wire [31:0] final_result;
+  assign final_result = use_fpu ? FPUResult : ALUOut;
+
   mux3 #(32) resultmux(
-    .d0(ALUOut),
+    .d0(final_result),
     .d1(Data),
     .d2(ALUResult),
     .s(ResultSrc),
