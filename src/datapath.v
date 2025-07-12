@@ -58,16 +58,13 @@ module datapath (
 
   // Datapath Hardware Submodules
 
- fpu fpu_unit (
-    .clk(clk),
-    .start(FPUWrite),  
-    .op(Instr[21:20]),
-    .precision(Instr[19]),
+  fpu fpu_unit (
     .a(RD1),
     .b(RD2),
+    .op(Instr[20]),
+    .precision(Instr[19]),
     .result(fpu_result),
-    .done(fpu_done),
-    .overflow()
+    .overflowFlag(fpu_overflow) 
   );
 
   flopenr #(32) pcreg(
