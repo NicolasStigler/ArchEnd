@@ -1,6 +1,6 @@
 module alu (
   input [31:0] a, b,
-  input [2:0] ALUControl,
+  input [3:0] ALUControl,
   output reg [31:0] Result, Long,
   output wire [3:0] ALUFlags
 );
@@ -15,13 +15,16 @@ assign sum = a + condinvb + ALUControl[0]; // a + b + cin
 always @(*) begin
   Long = 32'b0;
   casex (ALUControl)
-    3'b00?: Result = sum; // 0: ADD | 1: SUB
-    3'b010: Result = a & b; // AND
-    3'b011: Result = a | b; // ORR
-    3'b100: Result = a * b; // MUL
-    3'b101: { Long, Result } = $signed(a) * $signed(b); // SMUL
-    3'b110: { Long, Result } = $unsigned(a) * $unsigned(b); // UMUL
-    3'b111: Result = a / b; // DIV
+    4'b000?: Result = sum; // 0: ADD | 1: SUB
+    4'b0010: Result = a & b; // AND
+    4'b0011: Result = a | b; // ORR
+    4'b0100: Result = a * b; // MUL
+    4'b0101: { Long, Result } = $signed(a) * $signed(b); // SMUL
+    4'b0110: { Long, Result } = $unsigned(a) * $unsigned(b); // UMUL
+    4'b0111: Result = a / b; // DIV
+    4'b1000: Result = a ^ b; // EOR
+    4'b1001: Result = b; // MOV
+    4'b1010: Result = a << b; // LSL
   endcase
 end
 
