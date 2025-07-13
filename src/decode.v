@@ -10,7 +10,6 @@ module decode (
   NextPC,
   RegW,
   MemW,
-  FPUW,
   IRWrite,
   AdrSrc,
   ResultSrc,
@@ -18,7 +17,10 @@ module decode (
   ALUSrcB,
   ImmSrc,
   RegSrc,
-  ALUControl
+  ALUControl,
+  isMul,
+  longFlag,
+  state
 );
   input wire clk;
   input wire reset;
@@ -31,7 +33,6 @@ module decode (
   output wire NextPC;
   output wire RegW;
   output wire MemW;
-  output wire FPUW;
   output wire IRWrite;
   output wire AdrSrc;
   output wire [1:0] ResultSrc;
@@ -40,6 +41,9 @@ module decode (
   output wire [1:0] ImmSrc;
   output wire [1:0] RegSrc;
   output reg [3:0] ALUControl;
+  output wire isMul;
+  output wire longFlag;
+  output wire [3:0] state;
   wire Branch;
   wire ALUOp;
 
@@ -57,19 +61,23 @@ module decode (
     .NextPC(NextPC),
     .RegW(RegW),
     .MemW(MemW),
-    .FPUW(FPUW),
     .Branch(Branch),
-    .ALUOp(ALUOp)
+    .ALUOp(ALUOp),
+    .isMul(isMul),
+    .longFlag(longFlag),
+    .state(state)
   );
+
+  assign isMul = ((Op == 2'b00) & (Mul == 4'b1001));
 
   // ALU Decoder
   always @(*) begin
     if (ALUOp) begin
-      if (Mul == 4'b1001) // Instr[7:4] = Multiply Indicator
+      if (isMul) // Instr[7:4] = Multiply Indicator
         case (Funct[4:1])
           4'b0000: ALUControl = 4'b0100; // MUL
-          4'b0100: ALUControl = 4'b0101; // SMUL
-          4'b0110: ALUControl = 4'b0110; // UMUL
+          4'b0100: ALUControl = 4'b0110; // UMUL
+          4'b0110: ALUControl = 4'b0101; // SMUL
           4'b1000: ALUControl = 4'b0111; // DIV
           default: ALUControl = 4'bxxxx;
         endcase
@@ -82,6 +90,10 @@ module decode (
           4'b0001: ALUControl = 4'b1000; // EOR
           4'b1101: ALUControl = 4'b1001; // MOV
           4'b1110: ALUControl = 4'b1010; // LSL
+          4'b1000: ALUControl = 4'b1011; // Add16
+          4'b1010: ALUControl = 4'b1100; // Mul16
+          4'b1001: ALUControl = 4'b1101; // Add32
+          4'b1011: ALUControl = 4'b1110; // Mul32
           default: ALUControl = 4'bxxxx;
         endcase
       FlagW[1] = Funct[0];

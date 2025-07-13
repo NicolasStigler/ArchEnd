@@ -8,11 +8,9 @@ module condlogic (
   NextPC,
   RegW,
   MemW,
-  FPUW,
   PCWrite,
   RegWrite,
-  MemWrite,
-  FPUWrite
+  MemWrite
 );
   input wire clk;
   input wire reset;
@@ -23,23 +21,13 @@ module condlogic (
   input wire NextPC;
   input wire RegW;
   input wire MemW;
-  input wire FPUW;
   output wire PCWrite;
   output wire RegWrite;
   output wire MemWrite;
-  output wire FPUWrite;
   wire [1:0] FlagWrite;
   wire [3:0] Flags;
   wire CondEx;
   wire CondExFl;
-
-  // Delay writing flags until ALUWB state
-  flopr #(2) flagwritereg(
-    clk,
-    reset,
-    FlagW & {2 {CondEx}},
-    FlagWrite
-  );
 
   // ADD CODE HERE
   condcheck cc(
@@ -71,6 +59,7 @@ module condlogic (
     .q(Flags[1:0])
   );
 
+  assign FlagWrite = FlagW & {2 {CondEx}};
   assign PCWrite = NextPC | (PCS & CondExFl);
   assign RegWrite = CondExFl & RegW;
   assign MemWrite = CondExFl & MemW;

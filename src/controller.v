@@ -7,14 +7,17 @@ module controller (
   MemWrite,
   RegWrite,
   IRWrite,
-  FPUWrite,
   AdrSrc,
   RegSrc,
   ALUSrcA,
   ALUSrcB,
   ResultSrc,
   ImmSrc,
-  ALUControl
+  ALUControl,
+  isMul,
+  longFlag,
+  state,
+  A3
 );
   input wire clk;
   input wire reset;
@@ -24,7 +27,6 @@ module controller (
   output wire MemWrite;
   output wire RegWrite;
   output wire IRWrite;
-  output wire FPUWrite;
   output wire AdrSrc;
   output wire [1:0] RegSrc;
   output wire [1:0] ALUSrcA;
@@ -32,25 +34,27 @@ module controller (
   output wire [1:0] ResultSrc;
   output wire [1:0] ImmSrc;
   output wire [3:0] ALUControl;
+  output wire isMul;
+  output wire longFlag;
+  output wire [3:0] state;
+  input wire [3:0] A3;
   wire [1:0] FlagW;
   wire PCS;
   wire NextPC;
   wire RegW;
   wire MemW;
-  wire FPUW;
   decode dec(
     .clk(clk),
     .reset(reset),
     .Op(Instr[27:26]),
     .Funct(Instr[25:20]),
-    .Rd(Instr[15:12]),
+    .Rd(A3),
     .Mul(Instr[7:4]),
     .FlagW(FlagW),
     .PCS(PCS),
     .NextPC(NextPC),
     .RegW(RegW),
     .MemW(MemW),
-    .FPUW(FPUW),
     .IRWrite(IRWrite),
     .AdrSrc(AdrSrc),
     .ResultSrc(ResultSrc),
@@ -58,7 +62,10 @@ module controller (
     .ALUSrcB(ALUSrcB),
     .ImmSrc(ImmSrc),
     .RegSrc(RegSrc),
-    .ALUControl(ALUControl)
+    .ALUControl(ALUControl),
+    .isMul(isMul),
+    .longFlag(longFlag),
+    .state(state)
   );
   condlogic cl(
     .clk(clk),
@@ -70,10 +77,8 @@ module controller (
     .NextPC(NextPC),
     .RegW(RegW),
     .MemW(MemW),
-    .FPUW(FPUW),
     .PCWrite(PCWrite),
     .RegWrite(RegWrite),
-    .MemWrite(MemWrite),
-    .FPUWrite(FPUWrite)
+    .MemWrite(MemWrite)
   );
 endmodule

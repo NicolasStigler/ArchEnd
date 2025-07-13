@@ -9,14 +9,16 @@ module datapath (
   PCWrite,
   RegWrite,
   IRWrite,
-  FPUWrite,
   AdrSrc,
   RegSrc,
   ALUSrcA,
   ALUSrcB,
   ResultSrc,
   ImmSrc,
-  ALUControl
+  ALUControl,
+  isMul,
+  longFlag,
+  A3
 );
   input wire clk;
   input wire reset;
@@ -28,7 +30,6 @@ module datapath (
   input wire PCWrite;
   input wire RegWrite;
   input wire IRWrite;
-  input wire FPUWrite;
   input wire AdrSrc;
   input wire [1:0] RegSrc;
   input wire [1:0] ALUSrcA;
@@ -36,6 +37,9 @@ module datapath (
   input wire [1:0] ResultSrc;
   input wire [1:0] ImmSrc;
   input wire [3:0] ALUControl;
+  input wire isMul;
+  input wire longFlag;
+  output wire [3:0] A3;
   wire [31:0] PCNext;
   wire [31:0] PC;
   wire [31:0] ExtImm;
@@ -49,11 +53,10 @@ module datapath (
   wire [31:0] ALUResult;
   wire [31:0] ALUResult2;
   wire [31:0] ALUOut;
-  wire [31:0] FPUResult;
-  wire [4:0] FPUFlags;
   wire [3:0] RA1;
   wire [3:0] RA2;
-  wire [3:0] A3;
+
+  assign PCNext = Result;
 
   // Datapath Hardware Submodules
   flopenr #(32) pcreg(
@@ -87,7 +90,7 @@ module datapath (
   );
 
   wire [3:0] mRA1;
-  assign mRA1 = (Instr[7:4] == 4'b1001) ? Instr[3:0] : Instr[19:16];
+  assign mRA1 = (isMul) ? Instr[3:0] : Instr[19:16];
 
   mux2 #(4) ra1mux(
     .d0(mRA1),
@@ -97,7 +100,7 @@ module datapath (
   );
 
   wire [3:0] mRA2;
-  assign mRA2 = (Instr[7:4] == 4'b1001) ? Instr[11:8] : Instr[3:0];
+  assign mRA2 = (isMul) ? Instr[11:8] : Instr[3:0];
 
   mux2 #(4) ra2mux(
     .d0(mRA2),
@@ -106,7 +109,7 @@ module datapath (
     .y(RA2)
   );
 
-  assign A3 = (Instr[7:4] == 4'b1001) ? Instr[19:16] : Instr[15:12];
+  assign A3 = (isMul) ? Instr[19:16] : Instr[15:12];
 
   extend e(
     .Instr(Instr[23:0]),
@@ -117,16 +120,15 @@ module datapath (
   regfile rf(
     .clk(clk),
     .we3(RegWrite),
+    .we4(longFlag),
     .ra1(RA1),
     .ra2(RA2),
     .a3(A3),
     .a4(Instr[15:12]),
     .wd3(Result),
-    .wd4(ALUResult2),
     .r15(Result),
     .rd1(RD1),
-    .rd2(RD2),
-    .long(Instr[7:4] == 4'b1001)
+    .rd2(RD2)
   );
 
   flopr #(64) rdreg(
@@ -160,32 +162,20 @@ module datapath (
     .ALUFlags(ALUFlags)
   );
 
-  fpu fpu_inst(
-    .a(SrcA),
-    .b(SrcB),
-    .op(Instr[22]),
-    .prec(Instr[20]),
-    .result(FPUResult)
-  );
-
-  flopr #(32) alureg(
+  floplfr #(32) alureg(
     .clk(clk),
     .reset(reset),
-    .d(ALUResult),
+    .lf(longFlag),
+    .d0(ALUResult),
+    .d1(ALUResult2),
     .q(ALUOut)
   );
 
-  wire use_fpu = (Instr[27:26] == 2'b11);
-  wire [31:0] final_result;
-  assign final_result = use_fpu ? FPUResult : ALUOut;
-
   mux3 #(32) resultmux(
-    .d0(final_result),
+    .d0(ALUOut),
     .d1(Data),
     .d2(ALUResult),
     .s(ResultSrc),
     .y(Result)
   );
-
-  assign PCNext = Result;
 endmodule

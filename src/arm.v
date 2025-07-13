@@ -4,7 +4,11 @@ module arm (
   MemWrite,
   Adr,
   WriteData,
-  ReadData
+  ReadData,
+  RegWrite,
+  RegDisplay,
+  A3,
+  state
 );
   input wire clk;
   input wire reset;
@@ -12,12 +16,14 @@ module arm (
   output wire [31:0] Adr;
   output wire [31:0] WriteData;
   input wire [31:0] ReadData;
+  output wire [31:0] RegDisplay;
+  output wire [3:0] A3;
+  output wire [3:0] state;
+  output wire RegWrite;
   wire [31:0] Instr;
   wire [3:0] ALUFlags;
   wire PCWrite;
-  wire RegWrite;
   wire IRWrite;
-  wire FPUWrite;
   wire AdrSrc;
   wire [1:0] RegSrc;
   wire [1:0] ALUSrcA;
@@ -25,6 +31,8 @@ module arm (
   wire [1:0] ImmSrc;
   wire [3:0] ALUControl;
   wire [1:0] ResultSrc;
+  wire isMul;
+  wire longFlag;
   controller c(
     .clk(clk),
     .reset(reset),
@@ -34,14 +42,17 @@ module arm (
     .MemWrite(MemWrite),
     .RegWrite(RegWrite),
     .IRWrite(IRWrite),
-    .FPUWrite(FPUWrite),
     .AdrSrc(AdrSrc),
     .RegSrc(RegSrc),
     .ALUSrcA(ALUSrcA),
     .ALUSrcB(ALUSrcB),
     .ResultSrc(ResultSrc),
     .ImmSrc(ImmSrc),
-    .ALUControl(ALUControl)
+    .ALUControl(ALUControl),
+    .isMul(isMul),
+    .longFlag(longFlag),
+    .state(state),
+    .A3(A3)
   );
   datapath dp(
     .clk(clk),
@@ -54,13 +65,16 @@ module arm (
     .PCWrite(PCWrite),
     .RegWrite(RegWrite),
     .IRWrite(IRWrite),
-    .FPUWrite(FPUWrite),
     .AdrSrc(AdrSrc),
     .RegSrc(RegSrc),
     .ALUSrcA(ALUSrcA),
     .ALUSrcB(ALUSrcB),
     .ResultSrc(ResultSrc),
     .ImmSrc(ImmSrc),
-    .ALUControl(ALUControl)
+    .ALUControl(ALUControl),
+    .isMul(isMul),
+    .longFlag(longFlag),
+    .A3(A3)
   );
+  assign RegDisplay = dp.rf.rf[4'b1011];
 endmodule

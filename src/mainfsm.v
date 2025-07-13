@@ -11,9 +11,11 @@ module mainfsm (
   NextPC,
   RegW,
   MemW,
-  FPUW,
   Branch,
-  ALUOp
+  ALUOp,
+  isMul,
+  longFlag,
+  state
 );
   input wire clk;
   input wire reset;
@@ -27,12 +29,13 @@ module mainfsm (
   output wire NextPC;
   output wire RegW;
   output wire MemW;
-  output wire FPUW;
   output wire Branch;
   output wire ALUOp;
-  reg [3:0] state;
+  input wire isMul;
+  output wire longFlag;
+  output reg [3:0] state;
   reg [3:0] nextstate;
-  reg [12:0] controls;
+  reg [13:0] controls;
   localparam [3:0] FETCH = 0;
   localparam [3:0] DECODE = 1;
   localparam [3:0] MEMADR = 2;
@@ -42,8 +45,9 @@ module mainfsm (
   localparam [3:0] EXECUTER = 6;
   localparam [3:0] EXECUTEI = 7;
   localparam [3:0] ALUWB = 8;
-  localparam [3:0] BRANCH = 9;
-  localparam [3:0] UNKNOWN = 10;
+  localparam [3:0] ALUWB2 = 9;
+  localparam [3:0] BRANCH = 10;
+  localparam [3:0] UNKNOWN = 11;
 
   // state register
   always @(posedge clk or posedge reset)
@@ -65,11 +69,6 @@ module mainfsm (
               nextstate = EXECUTER;
           2'b01: nextstate = MEMADR;
           2'b10: nextstate = BRANCH;
-          2'b11: // FPU instructions follow ALU path
-            if (Funct[5])
-              nextstate = EXECUTEI;
-            else
-              nextstate = EXECUTER;
           default: nextstate = UNKNOWN;
         endcase
       EXECUTER: nextstate = ALUWB;
@@ -82,7 +81,8 @@ module mainfsm (
       MEMRD: nextstate = MEMWB;
       MEMWB: nextstate = FETCH;
       MEMWR: nextstate = FETCH;
-      ALUWB: nextstate = FETCH;
+      ALUWB: nextstate = ((Funct[4:1] == 4'b01?0) & isMul) ? ALUWB2 : FETCH;
+      ALUWB2: nextstate = FETCH;
       BRANCH: nextstate = FETCH;
       default: nextstate = FETCH;
     endcase
@@ -90,17 +90,18 @@ module mainfsm (
   // state-dependent output logic
   always @(*)
     case (state)
-      FETCH: controls = 13'b1000101001100;
-      DECODE: controls = 13'b0000001001100;
-      EXECUTER: controls = 13'b0000000000001;
-      EXECUTEI: controls = 13'b0000000000011;
-      ALUWB: controls = 13'b0001000000000;
-      MEMADR: controls = 13'b0000000000010;
-      MEMWR: controls = 13'b0010010000000;
-      MEMRD: controls = 13'b0000010000000;
-      MEMWB: controls = 13'b0001000100000;
-      BRANCH: controls = 13'b0100001000010;
-      default: controls = 13'bx;
+      FETCH: controls = 14'b10001010011000;
+      DECODE: controls = 14'b00000010011000;
+      EXECUTER: controls = 14'b00000000000010;
+      EXECUTEI: controls = 14'b00000000000110;
+      ALUWB: controls = ((Funct[4:1] == 4'b01?0) & isMul) ? 14'b00010000000001 : 14'b00010000000000;
+      ALUWB2: controls = 14'b00010000000000;
+      MEMADR: controls = 14'b00000000000100;
+      MEMWR: controls = 14'b00100100000000;
+      MEMRD: controls = 14'b00000100000000;
+      MEMWB: controls = 14'b00010001000000;
+      BRANCH: controls = 14'b01000010000100;
+      default: controls = 14'bx;
     endcase
-  assign {NextPC, Branch, MemW, RegW, IRWrite, AdrSrc, ResultSrc, ALUSrcA, ALUSrcB, ALUOp} = controls;
+  assign {NextPC, Branch, MemW, RegW, IRWrite, AdrSrc, ResultSrc, ALUSrcA, ALUSrcB, ALUOp, longFlag} = controls;
 endmodule
