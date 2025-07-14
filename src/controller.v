@@ -17,7 +17,7 @@ module controller (
   isMul,
   longFlag,
   state,
-  A3
+  Rd
 );
   input wire clk;
   input wire reset;
@@ -37,7 +37,7 @@ module controller (
   output wire isMul;
   output wire longFlag;
   output wire [3:0] state;
-  input wire [3:0] A3;
+  input wire [3:0] Rd;
   wire [1:0] FlagW;
   wire PCS;
   wire NextPC;
@@ -48,7 +48,7 @@ module controller (
     .reset(reset),
     .Op(Instr[27:26]),
     .Funct(Instr[25:20]),
-    .Rd(A3),
+    .Rd(Rd),
     .Mul(Instr[7:4]),
     .FlagW(FlagW),
     .PCS(PCS),

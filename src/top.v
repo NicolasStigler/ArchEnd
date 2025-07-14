@@ -17,7 +17,7 @@ module top (
   wire RegWrite;
   wire [31:0] RegDisplay;
   reg [15:0] DisplayData;
-  wire [3:0] A3;
+  wire [3:0] Rd;
   // instantiate processor and shared memory
   arm arm(
     .clk(clk),
@@ -28,7 +28,7 @@ module top (
     .ReadData(ReadData),
     .RegWrite(RegWrite),
     .RegDisplay(RegDisplay),
-    .A3(A3),
+    .Rd(Rd),
     .state(state)
   );
   mem mem(
@@ -43,7 +43,7 @@ module top (
   always @(posedge clk or posedge reset) begin
     if (reset) 
       DisplayData <= 16'b0; // reset display data
-    else if (RegWrite & (A3 == 4'b1011)) // if register 11 is written to
+    else if (RegWrite & (Rd == 4'b1011)) // if register 11 is written to
       DisplayData <= RegDisplay[15:0];
   end
 

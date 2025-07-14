@@ -18,6 +18,8 @@ module testbench;
     reset <= 1;
     #(5);
     reset <= 0;
+    #(1000);
+    $finish;
   end
   always begin
     clk <= 1;

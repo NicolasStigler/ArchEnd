@@ -228,7 +228,7 @@ module controller (
   isMul,
   longFlag,
   state,
-  A3
+  Rd
 );
   input wire clk;
   input wire reset;
@@ -248,7 +248,7 @@ module controller (
   output wire isMul;
   output wire longFlag;
   output wire [3:0] state;
-  input wire [3:0] A3;
+  input wire [3:0] Rd;
   wire [1:0] FlagW;
   wire PCS;
   wire NextPC;
@@ -259,7 +259,7 @@ module controller (
     .reset(reset),
     .Op(Instr[27:26]),
     .Funct(Instr[25:20]),
-    .Rd(A3),
+    .Rd(Rd),
     .Mul(Instr[7:4]),
     .FlagW(FlagW),
     .PCS(PCS),
@@ -377,7 +377,7 @@ module mainfsm (
       MEMRD: nextstate = MEMWB;
       MEMWB: nextstate = FETCH;
       MEMWR: nextstate = FETCH;
-      ALUWB: nextstate = ((Funct[4:1] == 4'b01?0) & isMul) ? ALUWB2 : FETCH;
+      ALUWB: nextstate = (((Funct[4:1] == 4'b0100) | (Funct[4:1] == 4'b0110)) & isMul) ? ALUWB2 : FETCH;
       ALUWB2: nextstate = FETCH;
       BRANCH: nextstate = FETCH;
       default: nextstate = FETCH;
@@ -390,7 +390,7 @@ module mainfsm (
       DECODE: controls = 14'b00000010011000;
       EXECUTER: controls = 14'b00000000000010;
       EXECUTEI: controls = 14'b00000000000110;
-      ALUWB: controls = ((Funct[4:1] == 4'b01?0) & isMul) ? 14'b00010000000001 : 14'b00010000000000;
+      ALUWB: controls = (((Funct[4:1] == 4'b0100) | (Funct[4:1] == 4'b0110)) & isMul) ? 14'b00010000000001 : 14'b00010000000000;
       ALUWB2: controls = 14'b00010000000000;
       MEMADR: controls = 14'b00000000000100;
       MEMWR: controls = 14'b00100100000000;
@@ -477,13 +477,12 @@ module floplfr (
   d1,
   q
 );
-  parameter WIDTH = 8;
   input wire clk;
   input wire reset;
   input wire lf;
-  input wire [WIDTH - 1:0] d0;
-  input wire [WIDTH - 1:0] d1;
-  output reg [WIDTH - 1:0] q;
+  input wire [31:0] d0;
+  input wire [31:0] d1;
+  output reg [31:0] q;
   always @(posedge clk or posedge reset)
     if (reset)
       q <= 0;
@@ -629,8 +628,8 @@ module decode (
       if (isMul) // Instr[7:4] = Multiply Indicator
         case (Funct[4:1])
           4'b0000: ALUControl = 4'b0100; // MUL
-          4'b0100: ALUControl = 4'b0101; // SMUL
-          4'b0110: ALUControl = 4'b0110; // UMUL
+          4'b0100: ALUControl = 4'b0110; // UMUL
+          4'b0110: ALUControl = 4'b0101; // SMUL
           4'b1000: ALUControl = 4'b0111; // DIV
           default: ALUControl = 4'bxxxx;
         endcase
@@ -740,7 +739,7 @@ module datapath (
   ALUControl,
   isMul,
   longFlag,
-  A3
+  Rd
 );
   input wire clk;
   input wire reset;
@@ -761,7 +760,7 @@ module datapath (
   input wire [3:0] ALUControl;
   input wire isMul;
   input wire longFlag;
-  output wire [3:0] A3;
+  output wire [3:0] Rd;
   wire [31:0] PCNext;
   wire [31:0] PC;
   wire [31:0] ExtImm;
@@ -831,7 +830,7 @@ module datapath (
     .y(RA2)
   );
 
-  assign A3 = (isMul) ? Instr[19:16] : Instr[15:12];
+  assign Rd = (isMul) ? Instr[19:16] : Instr[15:12];
 
   extend e(
     .Instr(Instr[23:0]),
@@ -845,7 +844,7 @@ module datapath (
     .we4(longFlag),
     .ra1(RA1),
     .ra2(RA2),
-    .a3(A3),
+    .a3(Rd),
     .a4(Instr[15:12]),
     .wd3(Result),
     .r15(Result),
@@ -884,7 +883,7 @@ module datapath (
     .ALUFlags(ALUFlags)
   );
 
-  floplfr #(32) alureg(
+  floplfr alureg(
     .clk(clk),
     .reset(reset),
     .lf(longFlag),
@@ -951,7 +950,7 @@ module top (
   wire RegWrite;
   wire [31:0] RegDisplay;
   reg [15:0] DisplayData;
-  wire [3:0] A3;
+  wire [3:0] Rd;
   // instantiate processor and shared memory
   arm arm(
     .clk(clk),
@@ -962,7 +961,7 @@ module top (
     .ReadData(ReadData),
     .RegWrite(RegWrite),
     .RegDisplay(RegDisplay),
-    .A3(A3),
+    .Rd(Rd),
     .state(state)
   );
   mem mem(
@@ -977,7 +976,7 @@ module top (
   always @(posedge clk or posedge reset) begin
     if (reset) 
       DisplayData <= 16'b0; // reset display data
-    else if (RegWrite & (A3 == 4'b1011)) // if register 11 is written to
+    else if (RegWrite & (Rd == 4'b1011)) // if register 11 is written to
       DisplayData <= RegDisplay[15:0];
   end
 
@@ -1277,7 +1276,7 @@ module arm (
   ReadData,
   RegWrite,
   RegDisplay,
-  A3,
+  Rd,
   state
 );
   input wire clk;
@@ -1287,7 +1286,7 @@ module arm (
   output wire [31:0] WriteData;
   input wire [31:0] ReadData;
   output wire [31:0] RegDisplay;
-  output wire [3:0] A3;
+  output wire [3:0] Rd;
   output wire [3:0] state;
   output wire RegWrite;
   wire [31:0] Instr;
@@ -1322,7 +1321,7 @@ module arm (
     .isMul(isMul),
     .longFlag(longFlag),
     .state(state),
-    .A3(A3)
+    .Rd(Rd)
   );
   datapath dp(
     .clk(clk),
@@ -1344,8 +1343,7 @@ module arm (
     .ALUControl(ALUControl),
     .isMul(isMul),
     .longFlag(longFlag),
-    .A3(A3)
+    .Rd(Rd)
   );
   assign RegDisplay = dp.rf.rf[4'b1011];
 endmodule
-

@@ -1,0 +1,34 @@
+[*]
+[*] GTKWave Analyzer v3.3.123 (w)1999-2025 BSI
+[*] Mon Jan 1 01:11:11 2025
+[*]
+[dumpfile] "waveform.vcd"
+[dumpfile_mtime] "Mon Jan 1 11:11:11 2025"
+[dumpfile_size] 115120
+[savefile] "gtk.gtkw"
+[timestart] 0
+[size] 1211 493
+[pos] -7 -4
+*-17.000000 26500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[treeopen] testbench.dut.
+[treeopen] testbench.dut.arm.
+[treeopen] testbench.dut.arm.dp.
+[sst_width] 269
+[signals_width] 126
+[sst_expanded] 1
+[sst_vpaned_height] 199
+@28
+testbench.dut.clk
+testbench.dut.reset
+@22
+testbench.dut.state[3:0]
+testbench.dut.arm.dp.PC[31:0]
+testbench.dut.arm.Instr[31:0]
+testbench.dut.arm.dp.a.a[31:0]
+testbench.dut.arm.dp.a.b[31:0]
+testbench.dut.arm.dp.a.Result[31:0]
+@23
+testbench.dut.arm.dp.a.Long[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

@@ -18,7 +18,7 @@ module datapath (
   ALUControl,
   isMul,
   longFlag,
-  A3
+  Rd
 );
   input wire clk;
   input wire reset;
@@ -39,7 +39,7 @@ module datapath (
   input wire [3:0] ALUControl;
   input wire isMul;
   input wire longFlag;
-  output wire [3:0] A3;
+  output wire [3:0] Rd;
   wire [31:0] PCNext;
   wire [31:0] PC;
   wire [31:0] ExtImm;
@@ -109,7 +109,8 @@ module datapath (
     .y(RA2)
   );
 
-  assign A3 = (isMul) ? Instr[19:16] : Instr[15:12];
+  wire [3:0] Rd;
+  assign Rd = (isMul) ? Instr[19:16] : Instr[15:12];
 
   extend e(
     .Instr(Instr[23:0]),
@@ -123,7 +124,7 @@ module datapath (
     .we4(longFlag),
     .ra1(RA1),
     .ra2(RA2),
-    .a3(A3),
+    .a3(Rd),
     .a4(Instr[15:12]),
     .wd3(Result),
     .r15(Result),
@@ -162,7 +163,7 @@ module datapath (
     .ALUFlags(ALUFlags)
   );
 
-  floplfr #(32) alureg(
+  floplfr alureg(
     .clk(clk),
     .reset(reset),
     .lf(longFlag),

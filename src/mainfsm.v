@@ -81,7 +81,7 @@ module mainfsm (
       MEMRD: nextstate = MEMWB;
       MEMWB: nextstate = FETCH;
       MEMWR: nextstate = FETCH;
-      ALUWB: nextstate = ((Funct[4:1] == 4'b01?0) & isMul) ? ALUWB2 : FETCH;
+      ALUWB: nextstate = (((Funct[4:1] == 4'b0100) | (Funct[4:1] == 4'b0110)) & isMul) ? ALUWB2 : FETCH;
       ALUWB2: nextstate = FETCH;
       BRANCH: nextstate = FETCH;
       default: nextstate = FETCH;
@@ -94,7 +94,7 @@ module mainfsm (
       DECODE: controls = 14'b00000010011000;
       EXECUTER: controls = 14'b00000000000010;
       EXECUTEI: controls = 14'b00000000000110;
-      ALUWB: controls = ((Funct[4:1] == 4'b01?0) & isMul) ? 14'b00010000000001 : 14'b00010000000000;
+      ALUWB: controls = (((Funct[4:1] == 4'b0100) | (Funct[4:1] == 4'b0110)) & isMul) ? 14'b00010000000001 : 14'b00010000000000;
       ALUWB2: controls = 14'b00010000000000;
       MEMADR: controls = 14'b00000000000100;
       MEMWR: controls = 14'b00100100000000;

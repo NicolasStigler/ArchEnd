@@ -7,7 +7,7 @@ module arm (
   ReadData,
   RegWrite,
   RegDisplay,
-  A3,
+  Rd,
   state
 );
   input wire clk;
@@ -17,7 +17,7 @@ module arm (
   output wire [31:0] WriteData;
   input wire [31:0] ReadData;
   output wire [31:0] RegDisplay;
-  output wire [3:0] A3;
+  output wire [3:0] Rd;
   output wire [3:0] state;
   output wire RegWrite;
   wire [31:0] Instr;
@@ -52,7 +52,7 @@ module arm (
     .isMul(isMul),
     .longFlag(longFlag),
     .state(state),
-    .A3(A3)
+    .Rd(Rd)
   );
   datapath dp(
     .clk(clk),
@@ -74,7 +74,7 @@ module arm (
     .ALUControl(ALUControl),
     .isMul(isMul),
     .longFlag(longFlag),
-    .A3(A3)
+    .Rd(Rd)
   );
   assign RegDisplay = dp.rf.rf[4'b1011];
 endmodule
